@@ -1,25 +1,42 @@
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import styled from "styled-components";
-import { teams } from "./api/teams";
+import { getTeamsFromCmsAsync } from "../cms/client";
+import CmsTeam from "../cms/CmsTeam";
 
 const Container = styled.div``;
 
-const HomePage: NextPage = () => {
+type HomePageProps = {
+  teams: CmsTeam[];
+};
+
+const HomePage: NextPage<HomePageProps> = ({ teams }) => {
   return (
     <Container>
-      <h1>
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
-      </h1>
+      <Head>
+        <title>NextJS FagMiles</title>
+      </Head>
+      <h1>Teams</h1>
       <ul>
         {teams.map((team) => (
-          <li key={team.slug}>
+          <li key={team._id}>
             <Link href={`/teams/${team.slug}`}>{team.name}</Link>
           </li>
         ))}
       </ul>
     </Container>
   );
+};
+
+export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
+  const teams = await getTeamsFromCmsAsync();
+
+  return {
+    props: {
+      teams,
+    },
+  };
 };
 
 export default HomePage;

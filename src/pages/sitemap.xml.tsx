@@ -1,13 +1,14 @@
 import { GetServerSideProps, NextPage } from "next";
 import { createGzip } from "node:zlib";
 import { SitemapStream, streamToPromise } from "sitemap";
-import { teams } from "./api/teams";
+import { getTeamsFromCmsAsync } from "../cms/client";
 
 const SitemapPage: NextPage = () => {
   return <></>;
 };
 
 const addUrls = async (smStream: SitemapStream) => {
+  const teams = await getTeamsFromCmsAsync();
   const urls: string[] = teams.map((t) => `/teams/${t.slug}`);
 
   for (const url of urls) {
